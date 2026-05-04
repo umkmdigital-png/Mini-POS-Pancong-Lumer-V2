@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pancong Lumer 🥞</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+<div class="hdr">
+  <span class="hdr-icon">🥞</span>
+  <h1 class="hdr-name">Pancong Lumer</h1>
+  <div class="hdr-sub">Mazboy Group · Outlet Kalibaru</div>
+  <div class="hdr-line"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nav-btn on" id="nb-absen" onclick="sw('absen',this)">
+    <span class="ico">📍</span>Absen
+  </button>
+  <button class="nav-btn" id="nb-jual" onclick="sw('jual',this)">
+    <span class="ico">🥞</span>Jualan
+  </button>
+  <button class="nav-btn" id="nb-stok" onclick="sw('stok',this)">
+    <span class="ico">📦</span>Stok
+  </button>
+  <button class="nav-btn" id="nb-rekap" onclick="sw('rekap',this)">
+    <span class="ico">📊</span>Rekap
+  </button>
+</nav>
+
+<div class="wrap">
+
+  <!-- ════════ TAB ABSEN ════════ -->
+  <div id="tab-absen" class="tab on">
+    <div class="prof-card">
+      <div class="prof-hd">
+        <div class="prof-av">🥞</div>
+        <div class="prof-info">
+          <p>Selamat bekerja,</p>
+          <h2 id="dn">Nama Staff</h2>
+          <p class="role" id="dr">Shift belum dipilih</p>
+        </div>
+      </div>
+      <div class="prof-meta">
+        <span>🕒 <strong id="clk">00:00:00</strong></span>
+        <span>📍 <strong>Outlet Kalibaru</strong></span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-ttl">📋 Data Check-In</div>
+      <div class="fgrp">
+        <label>Nama Lengkap</label>
+        <input type="text" id="p_nama" oninput="updProf()" placeholder="Ketuk untuk input nama...">
+      </div>
+      <div class="fgrp">
+        <label>Shift Kerja</label>
+        <select id="p_shift" onchange="updProf()">
+          <option value="">— Pilih Shift —</option>
+          <option>Shift Pagi</option>
+          <option>Shift Malam</option>
+        </select>
+      </div>
+      <div class="fgrp">
+        <label>Modal Awal (Cash)</label>
+        <input type="text" id="p_modal" onkeyup="fmt(this);calcTot()" placeholder="Rp 0">
+      </div>
+      <button class="btn-main" onclick="checkin()">✓ Konfirmasi Mulai Kerja</button>
+    </div>
+  </div>
+
+  <!-- ════════ TAB JUALAN ════════ -->
+  <div id="tab-jual" class="tab">
+    <!-- Menu Pancong -->
+    <div class="card">
+      <div class="card-ttl">🥞 Menu Pancong</div>
+      <div id="gpancong" class="menu-grid"></div>
+    </div>
+    <!-- Topping -->
+    <div class="card">
+      <div class="card-ttl">🧀 Topping <span style="font-family:Nunito;font-size:11px;color:var(--ink3);font-style:italic;font-weight:600">(tidak dihitung porsi)</span></div>
+      <div id="gtopping" class="top-grid"></div>
+    </div>
+    <!-- Pengeluaran -->
+    <div class="card">
+      <div class="card-ttl">💸 Pengeluaran Shift</div>
+      <div id="explist"></div>
+      <div class="exp-add-row">
+        <input id="en" type="text" placeholder="Nama pengeluaran...">
+        <input id="ep" type="text" placeholder="Rp 0" onkeyup="fmt(this)">
+        <button class="btn-add" onclick="addExp()">+</button>
+      </div>
+    </div>
+    <!-- Setoran -->
+    <div class="card">
+      <div class="card-ttl">💰 Input Non-Tunai</div>
+      <div class="fgrp">
+  <label>Masuk via QRIS (Otomatis)</label>
+  <input type="text" id="p_qris" placeholder="Rp 0" readonly style="background: #f0f0f0; border-color:var(--blue)">
+</div>
+<div class="fgrp">
+  <label>Masuk via Gojek / Online (Otomatis)</label>
+  <input type="text" id="p_online" placeholder="Rp 0" readonly style="background: #f0f0f0; border-color:var(--green)">
+</div>
+      <div class="stor-row"><span>Total Porsi Terjual</span><strong id="t_porsi">0 Porsi</strong></div>
+      <div class="stor-row big"><span>Setoran TUNAI</span><strong id="t_tunai">Rp 0</strong></div>
+      <button class="btn-wa" onclick="checkout()">⚡ Kirim Laporan ke WhatsApp</button>
+    </div>
+  </div>
+
+  <!-- ════════ TAB STOK ════════ -->
+  <div id="tab-stok" class="tab">
+    <div class="card">
+      <div class="card-ttl">📦 Stok Opname Akhir Shift</div>
+      <div class="fgrp">
+        <label>Sisa Cup / Adonan</label>
+        <input id="s_cup" type="number" placeholder="Jumlah cup tersisa">
+      </div>
+      <div class="fgrp">
+        <label>Sisa Bahan (SKM, UHT, Keju, dll)</label>
+        <input id="s_bahan" type="text" placeholder="Contoh: SKM 2 sachet, Keju 1 blok...">
+      </div>
+      <div class="fgrp">
+        <label>Catatan Tambahan</label>
+        <textarea id="s_note" rows="3" placeholder="Contoh: sabun habis, perlu restock susu..."></textarea>
+      </div>
+      <p style="font-size:11px;color:var(--ink3);font-style:italic;margin-top:4px">*Data stok ikut terkirim dalam laporan WA.</p>
+    </div>
+  </div>
+
+  <!-- ════════ TAB REKAP ════════ -->
+  <div id="tab-rekap" class="tab">
+    <div class="card">
+      <div class="card-ttl">📊 Ringkasan Shift</div>
+      <div class="rekap-box" id="rbox"><div class="empty">Belum ada transaksi</div></div>
+    </div>
+    <div id="rlist"></div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- FLOATING CART -->
+<button id="fcart" onclick="openM()">
+  <div class="fcart-l">
+    <span class="fcart-bubble" id="fc-cnt">0</span>
+    <span id="fc-lbl">porsi di keranjang</span>
+  </div>
+  <span class="fcart-r" id="fc-tot">Rp 0</span>
+</button>
+
+<!-- MODAL -->
+<div id="ov" onclick="ovClick(event)">
+  <div id="modal">
+    <div class="m-handle"></div>
+    <div class="m-hdr">
+      <div>
+        <div class="m-title">Keranjang Pesanan</div>
+        <div class="m-sub" id="m-sub">Pesanan baru</div>
+      </div>
+      <div class="m-hdr-r">
+        <span class="porsi-chip" id="m-chip">0 porsi</span>
+        <button class="btn-x" onclick="closeM()">✕</button>
+      </div>
+    </div>
+    <div class="m-scroll">
+      <!-- TAMBAHKAN KODE INI DI DALAM m-scroll -->
+        <div class="pil-block">
+          <div class="pil-ttl">👤 Nama Pelanggan</div>
+          <input type="text" id="c_name" placeholder="Masukkan nama pelanggan..." style="width:100%; padding:12px; border-radius:12px; border:1px solid var(--border); font-family:inherit; font-size:15px; margin-top:8px; outline:none;">
+        </div>
+      <div clss="m-sec-lbl">🥞 Pancong</div>
+      <div id="ml-pancong"></div>
+      <div id="ml-top-wrap" style="display:none">
+        <div class="m-sec-lbl">🧀 Topping</div>
+        <div id="ml-topping"></div>
+      </div>
+      <!-- Kematangan -->
+      <div class="pil-block">
+        <div class="pil-ttl">🔥 Tingkat Kematangan</div>
+        <div class="mat-row">
+          <button class="mc2 sel" data-v="Matang" onclick="setMat(this)">🟠<br>Matang</button>
+          <button class="mc2" data-v="3/4 Matang" onclick="setMat(this)">🟡<br>3/4 Matang</button>
+          <button class="mc2" data-v="Setengah" onclick="setMat(this)">⚪<br>Setengah</button>
+        </div>
+      </div>
+      <!-- Bayar -->
+      <div class="pil-block" style="border-top:1px solid var(--parchment)">
+        <div class="pil-ttl">💳 Metode Pembayaran</div>
+        <div class="pay-row">
+          <button class="pc2 sel" data-v="Tunai" onclick="setPay(this)">💵<br>Tunai</button>
+          <button class="pc2" data-v="QRIS" onclick="setPay(this)">📱<br>QRIS</button>
+          <button class="pc2" data-v="Gojek/Online" onclick="setPay(this)">🛵<br>Gojek</button>
+        </div>
+      </div>
+    </div>
+    <div class="m-foot">
+      <div class="m-tot-row">
+        <div>
+          <div class="m-tot-lbl">Subtotal pesanan ini</div>
+          <div class="m-tot-amt" id="m-tot">Rp 0</div>
+        </div>
+        <div class="m-tot-detail">
+          <small id="m-d1"></small>
+          <small id="m-d2"></small>
+        </div>
+      </div>
+      <div class="m-btns">
+        <button class="btn-rst" onclick="resetCart()">🗑 Reset</button>
+        <button class="btn-ok" onclick="confirmOrder()">✓ Simpan Pesanan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+
+  <script src="script.js"></script>
+</body>
+</html>
