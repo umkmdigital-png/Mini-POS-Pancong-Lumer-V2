@@ -16,6 +16,7 @@ const MP = [
   {id:'p12',em:'🌰', n:'Coklat Almond',   h:14000},
   {id:'p13',em:'🍈', n:'Durian',          h:10000},
   {id:'p14',em:'🎁', n:'Gratis',          h:0},
+  {id:'p15',em:'🎁', n:'Staff',          h:5000},
 ];
 const MT = [
   {id:'t1',em:'🧀',n:'Keju',  h:3000},
