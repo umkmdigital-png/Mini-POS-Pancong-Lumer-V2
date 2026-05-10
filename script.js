@@ -5,6 +5,7 @@ const MP = [
   {id:'p2', em:'🍫', n:'Cokelat',         h:10000},
   {id:'p3', em:'🧁', n:'Coklat Crunchy',  h:11000},
   {id:'p4', em:'🧀', n:'Coklat Keju',     h:13000},
+  {id:'p4', em:'🧀', n:'Keju Susu',     h:11000},
   {id:'p5', em:'🍪', n:'Coklat Oreo',     h:13000},
   {id:'p6', em:'☕', n:'Tiramisu',         h:10000},
   {id:'p7', em:'💜', n:'Taro',             h:10000},
@@ -23,7 +24,8 @@ const MT = [
   {id:'t4',em:'🍪',n:'Oreo',  h:3000},
   {id:'t5',em:'🌾',n:'Milo',  h:3000},
   {id:'t6',em:'🍓',n:'Selai', h:3000},
-  {id:'t7',em:'🥜',n:'Kacang',h:2000},
+{id:'t7',em:'🥜',n:'Kacang',h:2000},
+  {id:'t8',em:'🥜',n:'Almond', h:4000},
 ];
 
 /* ══════════════════════════════════════════
@@ -511,3 +513,46 @@ window.onload=()=>{
     }
   });
 };
+
+// ==========================================
+// 9. FUNGSI RESET DARURAT
+// ==========================================
+function confirmResetDarurat() {
+    if(navigator.vibrate) navigator.vibrate(20); // Memberikan efek getar jika didukung
+    
+    const peringatan = "🚨 PERINGATAN DARURAT! 🚨\n\nApakah Anda yakin ingin MENGHAPUS SEMUA DATA shift ini?\nSemua keranjang, riwayat, dan pengeluaran yang BELUM DIKIRIM akan hilang selamanya.";
+    
+    if (confirm(peringatan)) {
+        // 1. Kosongkan semua variabel state (keranjang, riwayat, pengeluaran)
+        orders = [];
+        exps = [];
+        oCnt = 0;
+        cP = {};
+        cT = {};
+        selMat = 'Matang';
+        selPay = 'Tunai';
+        
+        // 2. Kosongkan semua input field (Kecuali Nama & Shift)
+        const inputIds = ['p_modal', 'p_qris', 'p_online', 's_cup', 's_bahan', 's_note', 'en', 'ep', 'c_name'];
+        inputIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        
+        // 3. Hapus memori otomatis (Local Storage)
+        localStorage.removeItem('PANCONG_POS_DATA');
+        
+        // 4. Update ulang semua tampilan UI ke kondisi nol
+        upd(); 
+        renderExps(); 
+        renderRekap(); 
+        calcTot();
+        
+        // 5. Kembalikan tampilan ke tab awal (Check-in)
+        sw('absen', document.getElementById('nb-absen'));
+        
+        // 6. Tampilkan notifikasi
+        toast("🚨 Semua data berhasil dikosongkan!");
+    }
+}
+
