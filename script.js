@@ -24,8 +24,9 @@ const MT = [
   {id:'t4',em:'🍪',n:'Oreo',  h:3000},
   {id:'t5',em:'🌾',n:'Milo',  h:3000},
   {id:'t6',em:'🍓',n:'Selai', h:3000},
-{id:'t7',em:'🥜',n:'Kacang',h:2000},
+  {id:'t7',em:'🥜',n:'Kacang',h:2000},
   {id:'t8',em:'🥜',n:'Almond', h:4000},
+  {id:'t8',em:'🍒',n:'Red velvet', h:3000},
 ];
 
 /* ══════════════════════════════════════════
