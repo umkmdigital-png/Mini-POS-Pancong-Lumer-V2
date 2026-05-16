@@ -482,3 +482,42 @@ input:focus,select:focus,textarea:focus{
   border:1px solid rgba(245,192,64,.2);
 }
 #toast.show{opacity:1}
+
+/* Styling untuk form menu manual */
+.manual-input-card {
+    background: #1e1e1e;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border: 1px dashed #555;
+}
+.manual-input-card h4 {
+    margin-top: 0;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.manual-input-card input {
+    width: calc(100% - 22px);
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #333;
+    background: #2a2a2a;
+    color: #fff;
+    font-family: inherit;
+}
+.manual-input-card button {
+    width: 100%;
+    padding: 10px;
+    background: #e8003d; /* Warna merah khas Takoyaki Mazboy */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+.manual-input-card button:hover {
+    background: #c70034;
+}
