@@ -6,63 +6,6 @@
   <title>Pancong Lumer 🥞</title>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Floating Calculator</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <button id="calc-launcher" class="calc-btn-launch" onclick="toggleCalculator()">
-        <i class="fa-solid fa-calculator"></i>
-    </button>
-
-    <div id="floating-calc" class="calc-container">
-        
-        <div id="calc-header" class="calc-header">
-            <span class="calc-title"><i class="fa-solid fa-calculator"></i> Kalkulator</span>
-            <div class="calc-controls">
-                <button onclick="minimizeCalc()"><i class="fa-solid fa-minus"></i></button>
-                <button onclick="toggleCalculator()" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-        </div>
-
-        <div class="calc-screen">
-            <div id="calc-history" class="screen-history"></div>
-            <div id="calc-display" class="screen-main">0</div>
-        </div>
-
-        <div class="calc-buttons">
-            <button class="btn-action" onclick="clearScreen()">C</button>
-            <button class="btn-action" onclick="inputOp('()')">( )</button>
-            <button class="btn-action" onclick="inputOp('%')">%</button>
-            <button class="btn-operator" onclick="inputOp('/')">÷</button>
-
-            <button class="btn-num" onclick="inputNum('7')">7</button>
-            <button class="btn-num" onclick="inputNum('8')">8</button>
-            <button class="btn-num" onclick="inputNum('9')">9</button>
-            <button class="btn-operator" onclick="inputOp('*')">×</button>
-
-            <button class="btn-num" onclick="inputNum('4')">4</button>
-            <button class="btn-num" onclick="inputNum('5')">5</button>
-            <button class="btn-num" onclick="inputNum('6')">6</button>
-            <button class="btn-operator" onclick="inputOp('-')">−</button>
-
-            <button class="btn-num" onclick="inputNum('1')">1</button>
-            <button class="btn-num" onclick="inputNum('2')">2</button>
-            <button class="btn-num" onclick="inputNum('3')">3</button>
-            <button class="btn-operator" onclick="inputOp('+')">+</button>
-
-            <button class="btn-num" onclick="toggleSign()">±</button>
-            <button class="btn-num" onclick="inputNum('0')">0</button>
-            <button class="btn-num" onclick="inputNum('.')">.</button>
-            <button class="btn-equal" onclick="calculate()">=</button>
-        </div>
-
-        <div id="calc-resizer" class="calc-resizer"></div>
-    </div>
 </head>
 <body>
 
@@ -297,5 +240,51 @@
 
 
   <script src="script.js"></script>
+<button id="calc-trigger-btn" class="calc-trigger-btn">
+    📊 Kalkulator
+</button>
+
+<div id="floating-calc" class="floating-calculator hidden">
+    <div id="calc-header" class="calc-header">
+        <span class="calc-title">🧮 Kalkulator</span>
+        <div class="calc-controls">
+            <button id="calc-min-btn" title="Minimize">−</button>
+            <button id="calc-close-btn" title="Close">×</button>
+        </div>
+    </div>
+    
+    <div class="calc-body">
+        <div class="calc-screen">
+            <div id="calc-history" class="calc-history"></div>
+            <div id="calc-output" class="calc-output">0</div>
+        </div>
+        
+        <div class="calc-buttons">
+            <button class="btn btn-action" data-action="clear">C</button>
+            <button class="btn btn-action" data-action="backspace">⌫</button>
+            <button class="btn btn-action" data-action="percent">%</button>
+            <button class="btn btn-operator" data-action="divide">÷</button>
+            
+            <button class="btn" data-num="7">7</button>
+            <button class="btn" data-num="8">8</button>
+            <button class="btn" data-num="9">9</button>
+            <button class="btn btn-operator" data-action="multiply">×</button>
+            
+            <button class="btn" data-num="4">4</button>
+            <button class="btn" data-num="5">5</button>
+            <button class="btn" data-num="6">6</button>
+            <button class="btn btn-operator" data-action="subtract">−</button>
+            
+            <button class="btn" data-num="1">1</button>
+            <button class="btn" data-num="2">2</button>
+            <button class="btn" data-num="3">3</button>
+            <button class="btn btn-operator" data-action="add">+</button>
+            
+            <button class="btn btn-zero" data-num="0">0</button>
+            <button class="btn" data-num=".">.</button>
+            <button class="btn btn-equals" data-action="calculate">=</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
