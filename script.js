@@ -622,221 +622,155 @@ function confirmResetDarurat() {
     }
 }
 
-'use strict';
-
-// Ambil elemen DOM
-const calc = document.getElementById('floating-calc');
-const header = document.getElementById('calc-header');
-const resizer = document.getElementById('calc-resizer');
-const display = document.getElementById('calc-display');
-const history = document.getElementById('calc-history');
-const launcher = document.getElementById('calc-launcher');
-
-let currentInput = '0';
-let openBrackets = 0;
-
-/* ══════════════════════════════════════════
-   LOGIKA MATEMATIKA / KALKULATOR
-   ══════════════════════════════════════════ */
-function updateDisplay() {
-    display.innerText = currentInput;
-    // Otomatis mengecilkan font jika angka terlalu panjang ala HP
-    if (currentInput.length > 8) {
-        display.style.fontSize = '26px';
-    } else {
-        display.style.fontSize = '40px';
-    }
+/* --- Tombol Pemicu Utama --- */
+.calc-trigger-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #e8003d; /* Senada dengan warna merah Takoyaki Mazboy */
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    z-index: 9998;
+    transition: transform 0.2s, background 0.2s;
+}
+.calc-trigger-btn:hover {
+    transform: scale(1.05);
+    background: #c70034;
 }
 
-function inputNum(num) {
-    if (currentInput === '0' && num !== '.') {
-        currentInput = num;
-    } else {
-        // Mencegah titik ganda dalam satu bilangan
-        if (num === '.' && currentInput.split(/[\+\-\*\/]/).pop().includes('.')) return;
-        currentInput += num;
-    }
-    updateDisplay();
+/* --- Container Utama Kalkulator Melayang --- */
+.floating-calculator {
+    position: fixed;
+    top: 15%;
+    left: 70%;
+    width: 320px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 9999;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    user-select: none;
+    transition: height 0.2s ease-in-out;
 }
 
-function inputOp(op) {
-    const lastChar = currentInput.slice(-1);
-    
-    // Logika buka tutup kurung otomatis ( )
-    if (op === '()') {
-        if (currentInput === '0') {
-            currentInput = '(';
-            openBrackets++;
-        } else if (/[\+\-\*\/]/.test(lastChar) || lastChar === '(') {
-            currentInput += '(';
-            openBrackets++;
-        } else if (openBrackets > 0 && (/[0-9]/.test(lastChar) || lastChar === ')')) {
-            currentInput += ')';
-            openBrackets--;
-        } else {
-            currentInput += '*(';
-            openBrackets++;
-        }
-        updateDisplay();
-        return;
-    }
-
-    // Cegah operator ganda di ujung
-    if (/[\+\-\*\/]/.test(lastChar)) {
-        currentInput = currentInput.slice(0, -1) + op;
-    } else {
-        currentInput += op;
-    }
-    updateDisplay();
+/* State ketika disembunyikan total */
+.floating-calculator.hidden {
+    display: none;
 }
 
-function clearScreen() {
-    currentInput = '0';
-    history.innerText = '';
-    openBrackets = 0;
-    updateDisplay();
+/* State ketika diperkecil (Minimize) */
+.floating-calculator.minimized .calc-body {
+    display: none;
+}
+.floating-calculator.minimized {
+    width: 200px;
 }
 
-function toggleSign() {
-    if (currentInput === '0') return;
-    if (currentInput.startsWith('-')) {
-        currentInput = currentInput.slice(1);
-    } else {
-        currentInput = '-' + currentInput;
-    }
-    updateDisplay();
+/* --- Header Kalkulator --- */
+.calc-header {
+    background: #2a2a2a;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move; /* Indikator bahwa komponen ini bisa digeser */
+    border-bottom: 1px solid #333;
+}
+.calc-title {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+}
+.calc-controls button {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 16px;
+    margin-left: 8px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+}
+.calc-controls button:hover {
+    background: #444;
+    color: #fff;
+}
+#calc-close-btn:hover {
+    background: #e8003d;
 }
 
-function calculate() {
-    try {
-        let expression = currentInput;
-        // Ganti lambang persentase untuk kalkulasi evaluasi ekspresi dasar
-        expression = expression.replace(/%/g, '/100');
-        
-        // Evaluasi string matematika dengan aman
-        let result = eval(expression);
-        
-        // Atasi error desimal mengambang javascript (misal 0.1 + 0.2)
-        if (result % 1 !== 0) {
-            result = parseFloat(result.toFixed(8));
-        }
-
-        history.innerText = currentInput + ' =';
-        currentInput = String(result);
-        updateDisplay();
-    } catch (e) {
-        display.innerText = 'Format Error';
-        setTimeout(clearScreen, 1500);
-    }
+/* --- Layar Output --- */
+.calc-screen {
+    background: #111;
+    padding: 20px;
+    text-align: right;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.calc-history {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 5px;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+.calc-output {
+    color: #fff;
+    font-size: 32px;
+    font-weight: bold;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
-
-/* ══════════════════════════════════════════
-   FITUR DRAGGABLE (BISA DIGESER)
-   ══════════════════════════════════════════ */
-let isDragging = false;
-let startX, startY, initialLeft, initialTop;
-
-header.addEventListener('mousedown', startDrag);
-header.addEventListener('touchstart', startDrag, { passive: true });
-
-function startDrag(e) {
-    isDragging = true;
-    const clientX = e.clientX || e.touches[0].clientX;
-    const clientY = e.clientY || e.touches[0].clientY;
-    
-    startX = clientX;
-    startY = clientY;
-    
-    initialLeft = calc.offsetLeft;
-    initialTop = calc.offsetTop;
-
-    document.addEventListener('mousemove', doDrag);
-    document.addEventListener('mouseup', stopDrag);
-    document.addEventListener('touchmove', doDrag, { passive: false });
-    document.addEventListener('touchend', stopDrag);
+/* --- Grid Tombol --- */
+.calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: #2a2a2a;
+    padding: 1px;
+}
+.btn {
+    border: none;
+    background: #1e1e1e;
+    color: #fff;
+    padding: 18px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.btn:hover {
+    background: #2d2d2d;
+}
+.btn:active {
+    background: #3c3c3c;
 }
 
-function doDrag(e) {
-    if (!isDragging) return;
-    if (e.cancelable) e.preventDefault(); // Mencegah scroll layar bawaan HP saat ditarik
-    
-    const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-    const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
-
-    const deltaX = clientX - startX;
-    const deltaY = clientY - startY;
-
-    // Hitung posisi baru dengan batasan layar agar tidak keluar
-    let newLeft = initialLeft + deltaX;
-    let newTop = initialTop + deltaY;
-
-    newLeft = Math.max(0, Math.min(window.innerWidth - calc.offsetWidth, newLeft));
-    newTop = Math.max(0, Math.min(window.innerHeight - calc.offsetHeight, newTop));
-
-    calc.style.left = newLeft + 'px';
-    calc.style.top = newTop + 'px';
+/* Variasi Warna Tombol */
+.btn-action {
+    color: #e8003d;
 }
-
-function stopDrag() {
-    isDragging = false;
-    document.removeEventListener('mousemove', doDrag);
-    document.removeEventListener('mouseup', stopDrag);
-    document.removeEventListener('touchmove', doDrag);
-    document.removeEventListener('touchend', stopDrag);
+.btn-operator {
+    color: #ff9f0a;
 }
-
-
-/* ══════════════════════════════════════════
-   FITUR RESIZABLE (BISA DIUBAH UKURAN)
-   ══════════════════════════════════════════ */
-let isResizing = false;
-let startWidth, startHeight;
-
-resizer.addEventListener('mousedown', initResize);
-
-function initResize(e) {
-    isResizing = true;
-    startX = e.clientX;
-    startY = e.clientY;
-    startWidth = parseInt(document.defaultView.getComputedStyle(calc).width, 10);
-    startHeight = parseInt(document.defaultView.getComputedStyle(calc).height, 10);
-
-    document.addEventListener('mousemove', doResize);
-    document.addEventListener('mouseup', stopResize);
-    e.preventDefault();
+.btn-equals {
+    background: #ff9f0a;
+    color: #fff;
 }
-
-function doResize(e) {
-    if (!isResizing) return;
-    const newWidth = startWidth + (e.clientX - startX);
-    const newHeight = startHeight + (e.clientY - startY);
-    
-    calc.style.width = newWidth + 'px';
-    calc.style.height = newHeight + 'px';
+.btn-equals:hover {
+    background: #e08b07;
 }
-
-function stopResize() {
-    isResizing = false;
-    document.removeEventListener('mousemove', doResize);
-    document.removeEventListener('mouseup', stopResize);
-}
-
-
-/* ══════════════════════════════════════════
-   TOMBOL KONTROL JENDELA (CLOSE & LAUNCH)
-   ══════════════════════════════════════════ */
-function toggleCalculator() {
-    if (calc.style.display === 'none') {
-        calc.style.display = 'flex';
-        launcher.style.display = 'none';
-    } else {
-        calc.style.style.display = 'none';
-        launcher.style.display = 'block';
-    }
-}
-
-function minimizeCalc() {
-    calc.style.display = 'none';
-    launcher.style.display = 'block';
+.btn-zero {
+    grid-column: span 2;
 }
