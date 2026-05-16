@@ -622,3 +622,221 @@ function confirmResetDarurat() {
     }
 }
 
+'use strict';
+
+// Ambil elemen DOM
+const calc = document.getElementById('floating-calc');
+const header = document.getElementById('calc-header');
+const resizer = document.getElementById('calc-resizer');
+const display = document.getElementById('calc-display');
+const history = document.getElementById('calc-history');
+const launcher = document.getElementById('calc-launcher');
+
+let currentInput = '0';
+let openBrackets = 0;
+
+/* ══════════════════════════════════════════
+   LOGIKA MATEMATIKA / KALKULATOR
+   ══════════════════════════════════════════ */
+function updateDisplay() {
+    display.innerText = currentInput;
+    // Otomatis mengecilkan font jika angka terlalu panjang ala HP
+    if (currentInput.length > 8) {
+        display.style.fontSize = '26px';
+    } else {
+        display.style.fontSize = '40px';
+    }
+}
+
+function inputNum(num) {
+    if (currentInput === '0' && num !== '.') {
+        currentInput = num;
+    } else {
+        // Mencegah titik ganda dalam satu bilangan
+        if (num === '.' && currentInput.split(/[\+\-\*\/]/).pop().includes('.')) return;
+        currentInput += num;
+    }
+    updateDisplay();
+}
+
+function inputOp(op) {
+    const lastChar = currentInput.slice(-1);
+    
+    // Logika buka tutup kurung otomatis ( )
+    if (op === '()') {
+        if (currentInput === '0') {
+            currentInput = '(';
+            openBrackets++;
+        } else if (/[\+\-\*\/]/.test(lastChar) || lastChar === '(') {
+            currentInput += '(';
+            openBrackets++;
+        } else if (openBrackets > 0 && (/[0-9]/.test(lastChar) || lastChar === ')')) {
+            currentInput += ')';
+            openBrackets--;
+        } else {
+            currentInput += '*(';
+            openBrackets++;
+        }
+        updateDisplay();
+        return;
+    }
+
+    // Cegah operator ganda di ujung
+    if (/[\+\-\*\/]/.test(lastChar)) {
+        currentInput = currentInput.slice(0, -1) + op;
+    } else {
+        currentInput += op;
+    }
+    updateDisplay();
+}
+
+function clearScreen() {
+    currentInput = '0';
+    history.innerText = '';
+    openBrackets = 0;
+    updateDisplay();
+}
+
+function toggleSign() {
+    if (currentInput === '0') return;
+    if (currentInput.startsWith('-')) {
+        currentInput = currentInput.slice(1);
+    } else {
+        currentInput = '-' + currentInput;
+    }
+    updateDisplay();
+}
+
+function calculate() {
+    try {
+        let expression = currentInput;
+        // Ganti lambang persentase untuk kalkulasi evaluasi ekspresi dasar
+        expression = expression.replace(/%/g, '/100');
+        
+        // Evaluasi string matematika dengan aman
+        let result = eval(expression);
+        
+        // Atasi error desimal mengambang javascript (misal 0.1 + 0.2)
+        if (result % 1 !== 0) {
+            result = parseFloat(result.toFixed(8));
+        }
+
+        history.innerText = currentInput + ' =';
+        currentInput = String(result);
+        updateDisplay();
+    } catch (e) {
+        display.innerText = 'Format Error';
+        setTimeout(clearScreen, 1500);
+    }
+}
+
+
+/* ══════════════════════════════════════════
+   FITUR DRAGGABLE (BISA DIGESER)
+   ══════════════════════════════════════════ */
+let isDragging = false;
+let startX, startY, initialLeft, initialTop;
+
+header.addEventListener('mousedown', startDrag);
+header.addEventListener('touchstart', startDrag, { passive: true });
+
+function startDrag(e) {
+    isDragging = true;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const clientY = e.clientY || e.touches[0].clientY;
+    
+    startX = clientX;
+    startY = clientY;
+    
+    initialLeft = calc.offsetLeft;
+    initialTop = calc.offsetTop;
+
+    document.addEventListener('mousemove', doDrag);
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('touchmove', doDrag, { passive: false });
+    document.addEventListener('touchend', stopDrag);
+}
+
+function doDrag(e) {
+    if (!isDragging) return;
+    if (e.cancelable) e.preventDefault(); // Mencegah scroll layar bawaan HP saat ditarik
+    
+    const clientX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+    const clientY = e.clientY || (e.touches ? e.touches[0].clientY : 0);
+
+    const deltaX = clientX - startX;
+    const deltaY = clientY - startY;
+
+    // Hitung posisi baru dengan batasan layar agar tidak keluar
+    let newLeft = initialLeft + deltaX;
+    let newTop = initialTop + deltaY;
+
+    newLeft = Math.max(0, Math.min(window.innerWidth - calc.offsetWidth, newLeft));
+    newTop = Math.max(0, Math.min(window.innerHeight - calc.offsetHeight, newTop));
+
+    calc.style.left = newLeft + 'px';
+    calc.style.top = newTop + 'px';
+}
+
+function stopDrag() {
+    isDragging = false;
+    document.removeEventListener('mousemove', doDrag);
+    document.removeEventListener('mouseup', stopDrag);
+    document.removeEventListener('touchmove', doDrag);
+    document.removeEventListener('touchend', stopDrag);
+}
+
+
+/* ══════════════════════════════════════════
+   FITUR RESIZABLE (BISA DIUBAH UKURAN)
+   ══════════════════════════════════════════ */
+let isResizing = false;
+let startWidth, startHeight;
+
+resizer.addEventListener('mousedown', initResize);
+
+function initResize(e) {
+    isResizing = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    startWidth = parseInt(document.defaultView.getComputedStyle(calc).width, 10);
+    startHeight = parseInt(document.defaultView.getComputedStyle(calc).height, 10);
+
+    document.addEventListener('mousemove', doResize);
+    document.addEventListener('mouseup', stopResize);
+    e.preventDefault();
+}
+
+function doResize(e) {
+    if (!isResizing) return;
+    const newWidth = startWidth + (e.clientX - startX);
+    const newHeight = startHeight + (e.clientY - startY);
+    
+    calc.style.width = newWidth + 'px';
+    calc.style.height = newHeight + 'px';
+}
+
+function stopResize() {
+    isResizing = false;
+    document.removeEventListener('mousemove', doResize);
+    document.removeEventListener('mouseup', stopResize);
+}
+
+
+/* ══════════════════════════════════════════
+   TOMBOL KONTROL JENDELA (CLOSE & LAUNCH)
+   ══════════════════════════════════════════ */
+function toggleCalculator() {
+    if (calc.style.display === 'none') {
+        calc.style.display = 'flex';
+        launcher.style.display = 'none';
+    } else {
+        calc.style.style.display = 'none';
+        launcher.style.display = 'block';
+    }
+}
+
+function minimizeCalc() {
+    calc.style.display = 'none';
+    launcher.style.display = 'block';
+}
