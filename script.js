@@ -27,7 +27,7 @@ const MT = [
   {id:'t6',em:'🍓',n:'Selai', h:3000},
   {id:'t7',em:'🥜',n:'Kacang',h:2000},
   {id:'t8',em:'🥜',n:'Almond', h:4000},
-  {id:'t8',em:'🍒',n:'Red velvet', h:3000},
+  {id:'t9',em:'🍒',n:'Red velvet', h:3000},
 ];
 
 // 1. Tambahkan fungsi baru ini di area "HELPERS" atau "RENDER MENUS"
