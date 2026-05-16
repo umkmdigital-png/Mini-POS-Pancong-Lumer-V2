@@ -118,6 +118,18 @@
             <!-- END TOMBOL RESET DARURAT -->
 
         </div>
+
+  <div class="manual-input-card">
+  <h4>➕ Tambah Menu Custom</h4>
+  <input type="text" id="manual_name" placeholder="Nama Item (Misal: Tambahan Saus)" />
+  <input type="text" id="manual_price" placeholder="Harga (Misal: 5000)" onkeyup="fmt(this)" />
+  <button onclick="addManualMenu()">Tambahkan ke Keranjang</button>
+</div>
+
+<div class="input-group">
+  <label>💳 Total Setoran QRIS (Manual):</label>
+  <input type="text" id="p_qris" placeholder="Rp 0" onkeyup="fmt(this); calcTot();" onchange="saveData()" />
+</div>
   
   <!-- ════════ TAB STOK ════════ -->
   <div id="tab-stok" class="tab">
