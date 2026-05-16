@@ -30,6 +30,70 @@ const MT = [
   {id:'t8',em:'🍒',n:'Red velvet', h:3000},
 ];
 
+// 1. Tambahkan fungsi baru ini di area "HELPERS" atau "RENDER MENUS"
+function addManualMenu() {
+    const nameInput = document.getElementById('manual_name');
+    const priceInput = document.getElementById('manual_price');
+
+    const n = nameInput.value.trim();
+    const h = parseInt(priceInput.value.replace(/[^0-9]/g, '')) || 0;
+
+    if (!n || h <= 0) {
+        return alert('Masukkan nama item dan harga yang valid!');
+    }
+
+    // Buat ID unik untuk menu custom agar tidak bertabrakan
+    const id = 'manual_' + Date.now();
+
+    // Masukkan ke state Menu Utama (cP)
+    if (!cP[id]) {
+        cP[id] = { qty: 0, h: h, n: n, isManual: true };
+    }
+    cP[id].qty++;
+
+    // Bersihkan form setelah input
+    nameInput.value = '';
+    priceInput.value = '';
+
+    if(navigator.vibrate) navigator.vibrate(15);
+    toast('✓ Item manual ditambahkan');
+    
+    // Perbarui keranjang dan kalkulasi
+    upd(); 
+}
+
+// 2. Cari fungsi calcTot() di script asli Anda, lalu GANTI seluruh isinya dengan ini:
+function calcTot() {
+    const omzetTunai = orders.filter(o=>o.pay==='Tunai').reduce((a,o)=>a+o.sub, 0);
+    const omzetQRIS = orders.filter(o=>o.pay==='QRIS').reduce((a,o)=>a+o.sub, 0);
+    const omzetOnline = orders.filter(o=>o.pay==='Gojek/Online').reduce((a,o)=>a+o.sub, 0);
+
+    const { sP, sT, sSc } = tots();
+    const keranjang = sP + sT + sSc;
+
+    const modal = nn(g('p_modal').value);
+    const pengeluaran = exps.reduce((a,b) => a+b.p, 0);
+
+    /* BARIS DI BAWAH INI TELAH DIHAPUS AGAR QRIS TIDAK TERISI OTOMATIS:
+       g('p_qris').value = rp(totalQRIS);
+    */
+    
+    // Ambil nilai QRIS langsung dari apa yang diketik staf (Manual)
+    const manualQris = nn(g('p_qris').value);
+    // (Opsional) Jika Online juga mau manual, biarkan kode ini mengambil dari input
+    const manualOnline = nn(g('p_online').value);
+
+    // Hitung ulang Netto Tunai Kasir
+    // Netto = Modal + Total Semua Omzet Fisik - Pengeluaran Kasir - Uang di QRIS - Uang di Online
+    const totalSemuaPenjualan = omzetTunai + omzetQRIS + omzetOnline + keranjang;
+    const nettoTunai = modal + totalSemuaPenjualan - pengeluaran - manualQris - manualOnline;
+
+    const totalPorsi = orders.reduce((a,o)=>a+o.porsi, 0) + Object.values(cP).reduce((a,b)=>a+b.qty, 0);
+
+    g('t_porsi').innerText = totalPorsi + ' Porsi';
+    g('t_tunai').innerText = rp(nettoTunai < 0 ? 0 : nettoTunai);
+}
+
 /* ══════════════════════════════════════════
    STATE (DATA AKTIF)
 ══════════════════════════════════════════ */
