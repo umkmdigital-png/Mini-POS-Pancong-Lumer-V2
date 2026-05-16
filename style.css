@@ -521,3 +521,170 @@ input:focus,select:focus,textarea:focus{
 .manual-input-card button:hover {
     background: #c70034;
 }
+
+/* Reset Dasar */
+body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Tombol Launcher */
+.calc-btn-launch {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e8003d;
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(232, 0, 61, 0.4);
+    z-index: 999;
+    transition: transform 0.2s;
+    display: none; /* Sembunyikan default, muncul saat kalkulator di-close */
+}
+.calc-btn-launch:hover {
+    transform: scale(1.05);
+}
+
+/* Jendela Utama Kalkulator */
+.calc-container {
+    position: fixed;
+    top: 100px;
+    left: 100px;
+    width: 320px;
+    min-width: 280px;
+    max-width: 450px;
+    height: 480px;
+    min-height: 420px;
+    max-height: 650px;
+    background: #17171c;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    overflow: hidden;
+    border: 1px solid #2c2c35;
+}
+
+/* Header Jendela (Area Drag) */
+.calc-header {
+    padding: 12px 16px;
+    background: #212129;
+    color: #a5a5a5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move; /* Indikator bisa digeser */
+    user-select: none;
+}
+.calc-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+.calc-controls button {
+    background: none;
+    border: none;
+    color: #a5a5a5;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px;
+    transition: color 0.2s;
+}
+.calc-controls button:hover {
+    color: #ffffff;
+}
+.calc-controls .close-btn:hover {
+    color: #e8003d;
+}
+
+/* Bagian Layar */
+.calc-screen {
+    padding: 20px;
+    background: #17171c;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-grow: 1;
+    word-break: break-all;
+}
+.screen-history {
+    font-size: 16px;
+    color: #747477;
+    margin-bottom: 6px;
+    min-height: 20px;
+}
+.screen-main {
+    font-size: 40px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Grid Tombol Utama */
+.calc-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 20px;
+    background: #17171c;
+}
+.calc-buttons button {
+    border: none;
+    border-radius: 50%; /* Bulat ala iOS/Android modern */
+    font-size: 22px;
+    font-weight: 600;
+    cursor: pointer;
+    aspect-ratio: 1; /* Menjaga tombol tetap bulat sempurna */
+    transition: filter 0.2s, transform 0.1s;
+    user-select: none;
+}
+.calc-buttons button:active {
+    transform: scale(0.95);
+}
+
+/* Pewarnaan Tombol Tema HP */
+.btn-num {
+    background: #2e2f38;
+    color: #ffffff;
+}
+.btn-num:hover { filter: brightness(1.2); }
+
+.btn-action {
+    background: #4e505f;
+    color: #ffffff;
+}
+.btn-action:hover { filter: brightness(1.2); }
+
+.btn-operator {
+    background: #4b5efe;
+    color: #ffffff;
+}
+.btn-operator:hover { filter: brightness(1.2); }
+
+.btn-equal {
+    background: #e8003d;
+    color: #ffffff;
+}
+.btn-equal:hover { filter: brightness(1.2); }
+
+/* Resizer Handle (Pojok Kanan Bawah) */
+.calc-resizer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 15px;
+    height: 15px;
+    cursor: se-resize;
+    background: linear-gradient(135deg, transparent 40%, #4e505f 100%);
+    border-bottom-right-radius: 16px;
+}
